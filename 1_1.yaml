@@ -1,0 +1,22 @@
+name: unary multiplication
+source code: |-
+  input: '111+111'
+  blank: ' '
+  start state: first
+  table:
+    first:              # Стираем первую единицу из A
+      '1': {write: ' ', R: toPlus}  
+      '+': {write: ' ', R: done}
+    toPlus:             # Движемся к плюсу
+      '1': R
+      '+': {write: '1', R: toStart}   # Меняем + на 1
+    toStart:              # Движемся к началу A
+      '1': L
+      ' ': {R: done}
+    done:
+    
+positions:
+  first: {x: 443.7, y: 313.62, fixed: false}
+  toPlus: {x: 303.1, y: 288.52, fixed: false}
+  toStart: {x: 375.65, y: 165.5, fixed: false}
+  done: {x: 520, y: 190}
