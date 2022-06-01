@@ -26,6 +26,7 @@
 }
 
 \urlstyle{same}
+\usepackage{listings}
 
 \begin{document}
     \vbox{%
@@ -136,6 +137,74 @@
         \end{center}
         Код для реализации находится в файле 2\_3.yaml
     
+    \end{enumerate}
+    
+    \textbf{ЗАДАНИЕ 3.Квантовые вычисления}\\
+    \begin{enumerate}
+        \item \textbf{Генерация суперпозиций 1}\\
+        Дано $N$ кубитов ($1 \le N \le 8$) в нулевом состоянии $\Ket{0\dots0}$. Также дана некоторая последовательность битов, которое задаёт ненулевое базисное состояние размера $N$. Задача получить суперпозицию нулевого состояния и заданного.
+
+        $$\Ket{S} = \frac{1}{\sqrt2}(\Ket{0\dots0} +\Ket{\psi})$$
+
+        То есть требуется реализовать операцию, которая принимает на вход:
+
+        \begin{enumerate}
+            \item Массив кубитов $q_s$
+            \item Массив битов $bits$ описывающих некоторое состояние $\Ket{\psi}$. Это массив имеет тот же самый размер, что и $qs$. Первый элемент этого массива равен $1$.
+        \end{enumerate}
+
+        Так как первые кубиты векторов различны, то применяем оператор Адамара к первому кубиту
+
+        Далее если bits[i] равно 1, то запутываем i-ый кубит (оператор CNOT)
+
+        \begin{lstlisting}
+        namespace Solution {
+            open Microsoft.Quantum.Primitive;
+            open Microsoft.Quantum.Canon;
+            operation Solve (qs : Qubit[], bits : Bool[]) : ()
+            {
+                body
+                {
+                    H(qs[0]);
+                    for (i in 1..Length(qs) - 1)
+                        if (bits[i]) 
+                            CNOT(qs[0], qs[i]);
+                }
+            }
+        }
+        \end{lstlisting}
+        
+        \item \textbf{Различение состояний 1}\\
+        Дано $N$ кубитов ($1 \le N \le 8$), которые могут быть в одном из двух состояний:
+
+        $$\Ket{GHZ} = \frac{1}{\sqrt2}(\Ket{0\dots0} +\Ket{1\dots1})$$
+        $$\Ket{W} = \frac{1}{\sqrt N}(\Ket{10\dots00}+\Ket{01\dots00} + \dots +\Ket{00\dots01})$$
+
+        Требуется выполнить необходимые преобразования, чтобы точно различить эти два состояния. Возвращать $0$, если первое состояние и 1, если второе. \\\\
+        \begin{lstlisting}
+        namespace Solution {
+            open Microsoft.Quantum.Primitive;
+            open Microsoft.Quantum.Canon;
+            operation Solve (qs : Qubit[]) : Int
+            {
+                body
+                {
+                    mutable countOnes = 0;
+                    for (i in 0..Length(qs) - 1) {
+                        if (M(qs[i]) == One) {
+                            set countOnes = countOnes + 1;
+                        }
+                    }
+                    if (countOnes == Length(qs) or countOnes == 0)
+                    {
+                        return 0;
+                    }
+                    return 1;
+                }
+            }
+        }
+        \end{lstlisting}
+
     \end{enumerate}
     
 \end{document}
